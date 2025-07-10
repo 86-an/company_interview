@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja-JP">
+  <head>
+    <meta charset="utf-8" />
+    <title>面接練習ージャンル別</title>
+    <link rel="stylesheet" href="../css/select_genre.css" />
+  </head>
+  
+<body>
+  <h1>面接練習ージャンル別</h1>
+
+  <!-- # チェックボックス選択 -->
+  <h2>ジャンルとカテゴリを選択</h2>
+
+  <fieldset>
+    <legend>ジャンル</legend>
+    <div id="genre-boxes"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>カテゴリ</legend>
+    <div id="category-boxes"></div>
+  </fieldset>
+
+  <pre id="debug"></pre>
+
+  <!-- # 質問表示エリア -->
+  <h2>質問</h2>
+  <div id="question-area">
+    <p id="main-question">（ここに質問が表示されます）</p>
+    <ul id="followups"></ul>
+  </div>
+
+  <button id="show-selection">選択してスタート</button>
+  <button id="next-question">次へ</button>
+
+  <h1>音声認識＋文字起こし</h1>
+
+  <button id="start-btn">開始</button>
+  <button id="stop-btn" disabled>停止</button>
+  <button id="save-csv">保存</button>
+  <p id="status">ステータス：準備中</p>
+  <pre id="transcript"></pre>
+
+  <script src="../js/select_genre.js" defer></script>
+</body>
+</html>
