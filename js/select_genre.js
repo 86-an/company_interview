@@ -54,19 +54,15 @@ let currentPhase ="main";
 let currentQuestion = null;
 let currentFollowupIndex = 0;
 let responseLog = []
+
 // # 質問と深掘りを表示
 function displayQuestion(q) {
-  currentQuestion = q; // ✅ スペルミス修正！
-
+  currentQuestion = q; 
+  currentQuestion.currentFollowup = null;
+  currentQuestion.answer = "";
+  currentQuestion.followupAnswers = {};
+  currentQuestion.followups = [q["深堀１"], q["深堀２"], q["深堀３"]].filter(Boolean);
   document.getElementById("main-question").textContent = `🗣 ${q["質問"]}`;
-  q.followups = [q["深堀１"], q["深堀２"], q["深堀３"]].filter(Boolean);
-  const ul = document.getElementById("followups");
-  ul.innerHTML = "";
-  q.followups.forEach(f => {
-    const li = document.createElement("li");
-    li.textContent = `🔍 ${f}`;
-    ul.appendChild(li);
-  });
 }
 
 // # 初期化処理
@@ -112,49 +108,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.groupEnd()});
+
+    setupRecognition();
+    console.log("recognitionオブジェクトが初期化されました", recognition)
     });
 
-// # 「次へ」ボタンの処理
-document.getElementById("next-question").addEventListener("click", () => {
-  if (currentPhase === "main") {
-    currentPhase = "followup";
-    currentFollowupIndex = 0;
-  } else {
-    currentFollowupIndex++;
-  }
-
+document.getElementById("show-followup").addEventListener("click", () => {
   const followups = currentQuestion.followups;
-  if (currentPhase === "followup" && followups && currentFollowupIndex < followups.length) {
-    // 次の深堀を表示
-    const f = followups[currentFollowupIndex];
-    document.getElementById("main-question").textContent = `🔍 ${f}`;
+  const nextF = followups[Math.floor(Math.random() * followups.length)];
+  currentQuestion.currentFollowup = nextF; // ✅ 一時的に保存しておく
+
+  document.getElementById("main-question").textContent = `🔍 ${nextF}`;
+});
+
+document.getElementById("next-question").addEventListener("click", () => {
+  // 保存処理
+  responseLog.push({
+    ジャンル: currentQuestion["ジャンル"],
+    カテゴリ: currentQuestion["カテゴリ"],
+    質問: currentQuestion["質問"],
+    質問の答え: currentQuestion.answer || "",
+    深堀: currentQuestion.currentFollowup || "",
+    深堀の答え: currentQuestion.followupAnswers?.[currentQuestion.currentFollowup] || ""
+  });
+
+  // 質問切り替え
+  currentIndex++;
+  currentQuestion = null;
+  if (currentIndex < filteredQuestions.length) {
+    currentQuestion = filteredQuestions[currentIndex];
+    displayQuestion(currentQuestion);
   } else {
-    // 回答を保存して次の質問へ
-    responseLog.push({
-      ジャンル: currentQuestion["ジャンル"],
-      カテゴリ: currentQuestion["カテゴリ"],
-      質問: currentQuestion["質問"],
-      質問の答え: currentQuestion.answer || "",
-      深堀: currentQuestion.followups?.join(" / ") || "",
-      深堀の答え: Object.values(currentQuestion.followupAnswers || {}).join(" / ")
-    });
-
-    currentIndex++;
-    currentPhase = "main";
-    currentFollowupIndex = 0;
-
-    if (currentIndex < filteredQuestions.length) {
-      currentQuestion = filteredQuestions[currentIndex];
-      displayQuestion(currentQuestion);
-    } else {
-      document.getElementById("main-question").textContent = "🎉 すべての質問が終了しました";
-      document.getElementById("followups").innerHTML = "";
-    }
+    document.getElementById("main-question").textContent = "🎉 すべての質問が終了しました";
   }
-
-  setupRecognition();
-  document.getElementById("start-btn").addEventListener("click", startRecognition);
-  document.getElementById("stop-btn").addEventListener("click", stopRecognition);
 });
 
 let recognition;
@@ -180,15 +166,14 @@ function setupRecognition() {
       if (res.isFinal) {
         finalTranscript += txt;
 
-        if (currentQuestion) {
-          if (currentPhase === "main") {
-            currentQuestion.answer = txt;
-          } else if (currentPhase === "followup") {
-            const followup = currentQuestion.followups[currentFollowupIndex];
-            if (!currentQuestion.followupAnswers) currentQuestion.followupAnswers = {};
-            currentQuestion.followupAnswers[followup] = txt;
-          }
+      if (currentQuestion) {
+        if (currentPhase === "main") {
+          currentQuestion.answer = txt;
+        } else if (currentPhase === "followup" && currentQuestion.currentFollowup) {
+          if (!currentQuestion.followupAnswers) currentQuestion.followupAnswers = {};
+          currentQuestion.followupAnswers[currentQuestion.currentFollowup] = txt;
         }
+      }
       } else {
         interim += txt;
       }
@@ -211,6 +196,7 @@ function setupRecognition() {
 
 // ✅ setupRecognition の外に定義する
 function startRecognition() {
+  console.log("startRecognitionが呼び出されました！");
   if (!recognition) {
     alert("音声認識が初期化されていません。");
     return;
@@ -229,7 +215,8 @@ function stopRecognition() {
   document.getElementById("stop-btn").disabled = true;
 }
 
-
+document.getElementById("start-btn").addEventListener("click", startRecognition);
+document.getElementById("stop-btn").addEventListener("click", stopRecognition);
 
 function exportToCSV(data) {
   const headers = ["ジャンル", "カテゴリ", "質問", "質問の答え", "深堀", "深堀の答え"];
