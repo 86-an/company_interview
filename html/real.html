@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>面接練習 - 対象別</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="../css/common.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/common.css" />
+  </head>
+  
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">模擬面接</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                <a class="nav-link" href="home.html">Home</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="select_genre.html">ジャンル別</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="see_company_interview.html">質問集</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="key.html">コツ</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="agreement.html">規約</a>
+                </li>
+            </ul>
+            </div>
+        </div>
+    </nav>
+
+  <fieldset>
+    <legend>対象</legend>
+    <div id="target-audience-boxes">
+      <label><input type="radio" name="target-audience" value="学生" id="target-audience-student"> 学生</label>
+      <label><input type="radio" name="target-audience" value="社会人" id="target-audience-professional"> 社会人</label><br>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>面接フェーズ</legend>
+    <div id="interview-phase-boxes"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>面接官タイプ</legend>
+    <div id="interviewer-type-boxes"></div>
+  </fieldset>
+
+  <pre id="debug"></pre>
+
+  <h2>質問</h2>
+  <div id="question-area">
+    <p id="main-question">（ここに質問が表示されます）</p>
+    <ul id="followups"></ul>
+  </div>
+
+  <div id="button_group">
+    <button id="show-selection" type="button" class="btn btn-primary">選択してスタート</button>
+    <button id="show-followup" type="button" class="btn btn-primary">深堀する</button>
+    <button id="next-question" type="button" class="btn btn-primary">次へ</button>
+  </div>
+
+  <h1>音声認識＋文字起こし</h1>
+  <p id="status">ステータス：待機中</p>
+  <div id="transcript-area">
+    <p id="transcript"></p>
+  </div>
+  <div id="recognition_button_group">
+    <button id="start-btn" type="button" class="btn btn-success">開始</button>
+    <button id="stop-btn" type="button" class="btn btn-danger" disabled>停止</button>
+  </div>
+  <button id="save-csv" type="button" class="btn btn-info">保存</button>
+
+  <script type="module" src="../js/real.js"></script>
+</body>
+</html>
