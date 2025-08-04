@@ -45,39 +45,41 @@ document.getElementById("show-selection").addEventListener("click", () => {
   recogState.mainTranscript = "";
   recogState.followupTranscript = "";
   recogState.currentPhase = "main"
-console.group("▶ show-selection");
+  console.group("▶ show-selection");
 
-// 1) チェック済みジャンル・カテゴリの取得
-const selectedGenres   = getCheckedValues("genre");
-const selectedCategories = getCheckedValues("category");
-console.log("1) selectedGenres:",   selectedGenres);
-console.log("2) selectedCategories:", selectedCategories);
+  // 1) チェック済みジャンル・カテゴリの取得
+  const selectedGenres   = getCheckedValues("genre");
+  const selectedCategories = getCheckedValues("category");
+  console.log("1) selectedGenres:",   selectedGenres);
+  console.log("2) selectedCategories:", selectedCategories);
 
-// 2) フィルタ前／後のレコード数を比較
-console.log("3) before filter, records.length:", records.length);
-const filtered = filterQuestions(records, selectedGenres, selectedCategories);
-console.log("4) filtered (unshuffled).length:", filtered.length);
+  // 2) フィルタ前／後のレコード数を比較
+  console.log("3) before filter, records.length:", records.length);
+  const filtered = filterQuestions(records, selectedGenres, selectedCategories);
+  console.log("4) filtered (unshuffled).length:", filtered.length);
 
-// 3) シャッフル結果
-filteredQuestions = shuffleArray(filtered);
-console.log("5) filteredQuestions (shuffled).length:", filteredQuestions.length);
-console.log("6) first few questions:", filteredQuestions.slice(0,3));
+  // 3) シャッフル結果
+  filteredQuestions = shuffleArray(filtered);
+  console.log("5) filteredQuestions (shuffled).length:", filteredQuestions.length);
+  console.log("6) first few questions:", filteredQuestions.slice(0,3));
 
-// 4) インデックス・表示
-currentIndex = 0;
-if (filteredQuestions.length > 0) {
-    console.log("7) displaying index:", currentIndex);
-    displayQuestion(filteredQuestions[currentIndex]);
-} else {
-    console.warn("⚠️ フィルタ結果 0 件!");
-    document.getElementById("main-question").textContent = "⚠️ 該当する質問がありません";
-    document.getElementById("followups").innerHTML = "";
-}
+  // 4) インデックス・表示
+  currentIndex = 0;
+  if (filteredQuestions.length > 0) {
+      console.log("7) displaying index:", currentIndex);
+      displayQuestion(filteredQuestions[currentIndex]);
+  } else {
+      console.warn("⚠️ フィルタ結果 0 件!");
+      document.getElementById("main-question").textContent = "⚠️ 該当する質問がありません";
+      document.getElementById("followups").innerHTML = "";
+  }
 
-console.groupEnd()});
+  console.groupEnd()});
 
-recogState = setuprecogState(recogState);
-console.log("recogState.recognitionオブジェクトが初期化されました", recogState.recognition)
+  recogState = setuprecogState(recogState);
+  // # 音声認識をスタート
+  recogState = startrecogState(recogState);
+  console.log("recogState.recognitionオブジェクトが初期化されました", recogState.recognition)
 });
 
 
@@ -94,8 +96,6 @@ document.getElementById("show-followup").addEventListener("click", () => {
   const nextF = followups[Math.floor(Math.random() * followups.length)];
   recogState.currentQuestion.currentFollowup = nextF;
   document.getElementById("main-question").textContent = `🗣 (深堀) ${nextF}`;
-  // # 音声認識をスタート
-  recogState = startrecogState(recogState);
 });
 
 document.getElementById("next-question").addEventListener("click", () => {
